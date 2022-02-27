@@ -105,91 +105,12 @@ contains
       tc1(i,j,k) = ux1(i,j,k) * uz1(i,j,k)
     enddo
 
-    call derx (td1,ta1,sx,x3d_op_derxp,xsize(1),xsize(2),xsize(3))
-    call derx (te1,tb1,sx,x3d_op_derx, xsize(1),xsize(2),xsize(3))
-    call derx (tf1,tc1,sx,x3d_op_derx, xsize(1),xsize(2),xsize(3))
-    call derx (ta1,ux1,sx,x3d_op_derx, xsize(1),xsize(2),xsize(3))
-    call derx (tb1,uy1,sx,x3d_op_derxp,xsize(1),xsize(2),xsize(3))
-    call derx (tc1,uz1,sx,x3d_op_derxp,xsize(1),xsize(2),xsize(3))
-
-    ! Convective terms of x-pencil are stored in tg1,th1,ti1
-    do concurrent (k=1:xsize(3), j=1:xsize(2), i=1:xsize(1))
-      tg1(i,j,k) = td1(i,j,k) + ux1(i,j,k) * ta1(i,j,k)
-      th1(i,j,k) = te1(i,j,k) + ux1(i,j,k) * tb1(i,j,k)
-      ti1(i,j,k) = tf1(i,j,k) + ux1(i,j,k) * tc1(i,j,k)
-    enddo
-    ! TODO: save the x-convective terms already in dux1, duy1, duz1
-
-    call test_du(ta1)
+    call derx (tb1,ta1,sx,x3d_op_derxp,xsize(1),xsize(2),xsize(3))
+    call derx_00_omp (tc1,ta1,sx,x3d_op_derxp,xsize(1),xsize(2),xsize(3))
     
-    call x3d_transpose_x_to_y(ux1,ux2)
-    call x3d_transpose_x_to_y(uy1,uy2)
-    call x3d_transpose_x_to_y(uz1,uz2)
-
-    !WORK Y-PENCILS
-    
-    do concurrent (k=1:ysize(3), j=1:ysize(2), i=1:ysize(1))
-      td2(i,j,k) = ux2(i,j,k) * uy2(i,j,k)
-      te2(i,j,k) = uy2(i,j,k) * uy2(i,j,k)
-      tf2(i,j,k) = uz2(i,j,k) * uy2(i,j,k)
-    enddo
-
-    call dery (tg2,td2,sy,x3d_op_dery ,ppy,ysize(1),ysize(2),ysize(3))
-    call dery (th2,te2,sy,x3d_op_deryp,ppy,ysize(1),ysize(2),ysize(3))
-    call dery (ti2,tf2,sy,x3d_op_dery ,ppy,ysize(1),ysize(2),ysize(3))
-    call dery (td2,ux2,sy,x3d_op_deryp,ppy,ysize(1),ysize(2),ysize(3))
-    call dery (te2,uy2,sy,x3d_op_dery ,ppy,ysize(1),ysize(2),ysize(3))
-    call dery (tf2,uz2,sy,x3d_op_deryp,ppy,ysize(1),ysize(2),ysize(3))
-
-    ! Convective terms of y-pencil in tg2,th2,ti2
-    do concurrent (k=1:ysize(3), j=1:ysize(2), i=1:ysize(1))
-      tg2(i,j,k) = tg2(i,j,k) + uy2(i,j,k) * td2(i,j,k)
-      th2(i,j,k) = th2(i,j,k) + uy2(i,j,k) * te2(i,j,k)
-      ti2(i,j,k) = ti2(i,j,k) + uy2(i,j,k) * tf2(i,j,k)
-    enddo
-    
-    call test_dv(te2)
-    
-    call x3d_transpose_y_to_z(ux2,ux3)
-    call x3d_transpose_y_to_z(uy2,uy3)
-    call x3d_transpose_y_to_z(uz2,uz3)
-
-    !WORK Z-PENCILS
-    do concurrent (k=1:zsize(3), j=1:zsize(2), i=1:zsize(1))
-      td3(i,j,k) = ux3(i,j,k) * uz3(i,j,k)
-      te3(i,j,k) = uy3(i,j,k) * uz3(i,j,k)
-      tf3(i,j,k) = uz3(i,j,k) * uz3(i,j,k)
-    enddo
-
-    call derz (tg3,td3,sz,x3d_op_derz ,zsize(1),zsize(2),zsize(3))
-    call derz (th3,te3,sz,x3d_op_derz ,zsize(1),zsize(2),zsize(3))
-    call derz (ti3,tf3,sz,x3d_op_derzp,zsize(1),zsize(2),zsize(3))
-    call derz (td3,ux3,sz,x3d_op_derzp,zsize(1),zsize(2),zsize(3))
-    call derz (te3,uy3,sz,x3d_op_derzp,zsize(1),zsize(2),zsize(3))
-    call derz (tf3,uz3,sz,x3d_op_derz ,zsize(1),zsize(2),zsize(3))
-
-    ! Convective terms of z-pencil in ta3,tb3,tc3
-    do concurrent (k=1:zsize(3), j=1:zsize(2), i=1:zsize(1))
-      ta3(i,j,k) = tg3(i,j,k) + uz3(i,j,k) * td3(i,j,k)
-      tb3(i,j,k) = th3(i,j,k) + uz3(i,j,k) * te3(i,j,k)
-      tc3(i,j,k) = ti3(i,j,k) + uz3(i,j,k) * tf3(i,j,k)
-    enddo 
-
-    call test_dw(tf3)
-    
-    !WORK Y-PENCILS
-    call x3d_transpose_z_to_y(ta3,td2)
-    call x3d_transpose_z_to_y(tb3,te2)
-    call x3d_transpose_z_to_y(tc3,tf2)
-
-    !WORK X-PENCILS
-    call x3d_transpose_y_to_x(td2,ta1)
-    call x3d_transpose_y_to_x(te2,tb1)
-    call x3d_transpose_y_to_x(tf2,tc1) !diff+conv. terms
-
     !FINAL SUM: DIFF TERMS + CONV TERMS
     do concurrent (k=1:xsize(3), j=1:xsize(2), i=1:xsize(1))
-      dux1(i,j,k,1) = ta1(i,j,k)
+      dux1(i,j,k,1) = tb1(i,j,k) - tc1(i,j,k)
       duy1(i,j,k,1) = tb1(i,j,k)
       duz1(i,j,k,1) = tc1(i,j,k)
     enddo

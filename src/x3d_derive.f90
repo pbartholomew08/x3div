@@ -178,6 +178,47 @@ subroutine derx_00(tx,ux,sx,x3dop,nx,ny,nz)
 
 end subroutine derx_00
 
+subroutine derx_00_omp(tx,ux,sx,x3dop,nx,ny,nz)
+
+  use x3d_operator_x_data
+
+  implicit none
+
+  ! Arguments
+  integer, intent(in) :: nx, ny, nz
+  real(mytype), intent(out), dimension(nx,ny,nz) :: tx
+  real(mytype), intent(in), dimension(nx,ny,nz) :: ux
+  real(mytype), intent(out), dimension(ny,nz):: sx
+  type(x3doperator1d), intent(in) :: x3dop
+
+  ! Local variables
+  integer :: i, j, k
+
+  !$omp parallel do collapse(2) private(i, j, k)
+  do k = 1, nz
+     do j = 1, ny
+        ! Compute r.h.s.
+        tx(1,j,k) = afix*(ux(2,j,k)-ux(nx,j,k)) &
+             + bfix*(ux(3,j,k)-ux(nx-1,j,k))
+        tx(2,j,k) = afix*(ux(3,j,k)-ux(1,j,k)) &
+             + bfix*(ux(4,j,k)-ux(nx,j,k))
+        do i=3, nx-2
+           tx(i,j,k) = afix*(ux(i+1,j,k)-ux(i-1,j,k)) &
+                + bfix*(ux(i+2,j,k)-ux(i-2,j,k))
+        enddo
+        tx(nx-1,j,k) = afix*(ux(nx,j,k)-ux(nx-2,j,k)) &
+             + bfix*(ux(1,j,k)-ux(nx-3,j,k))
+        tx(nx,j,k) = afix*(ux(1,j,k)-ux(nx-1,j,k)) &
+             + bfix*(ux(2,j,k)-ux(nx-2,j,k))
+     enddo
+  enddo
+  !$omp end parallel do
+
+  ! Solve tri-diagonal system
+  call xthomas_omp(tx, sx, x3dop%f, x3dop%s, x3dop%w, x3dop%periodic, x3dop%alfa, nx, ny, nz)
+
+end subroutine derx_00_omp
+
 !********************************************************************
 !
 subroutine derx_ij(tx,ux,sx,ff,fs,fw,nx,ny,nz,npaire,ncl1,ncln)

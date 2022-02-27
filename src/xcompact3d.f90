@@ -38,7 +38,6 @@ program xcompact3d
   use decomp_2d, only : nrank, xsize, real_type, decomp_2d_warning 
   use param,   only : dt, zero, itr
   use transeq, only : calculate_transeq_rhs
-  use navier,  only : solve_poisson, cor_vel
   use mom,     only : test_du, test_dv, test_dw
   use time_integrators, only : int_time
 
@@ -66,13 +65,6 @@ program xcompact3d
      tstart = MPI_Wtime()
 
      call calculate_transeq_rhs(dux1,duy1,duz1,ux1,uy1,uz1)
-     call int_time(ux1,uy1,uz1,dux1,duy1,duz1)
-     
-     !do concurrent (k=1:zsize(3), j=1:zsize(2), i=1:zsize(1))
-     !  divu3(:,:,:) = zero
-     !enddo
-     call solve_poisson(pp3,px1,py1,pz1,ux1,uy1,uz1)
-     call cor_vel(ux1,uy1,uz1,px1,py1,pz1)
 
      tend = MPI_Wtime()
      telapsed = telapsed + (tend - tstart)

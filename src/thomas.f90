@@ -38,12 +38,17 @@ module thomas
   implicit none
 
   private
-  public :: xthomas, ythomas, zthomas, thomas1d
+  public :: xthomas, xthomas_omp, ythomas, zthomas, thomas1d
 
   interface xthomas
     module procedure xthomas_0
     module procedure xthomas_12
   end interface xthomas
+
+  interface xthomas_omp
+    module procedure xthomas_0_omp
+    module procedure xthomas_12_omp
+  end interface xthomas_omp
 
   interface ythomas
     module procedure ythomas_0
@@ -83,6 +88,36 @@ contains
 
   end subroutine xthomas_0
 
+  subroutine xthomas_0_omp(tt, ss, ff, fs, fw, perio, alfa, nx, ny, nz)
+    ! XXX: won't compile as PURE under GCC
+
+    implicit none
+
+    integer, intent(in) :: nx, ny, nz
+    real(mytype), intent(inout), dimension(nx,ny,nz) :: tt
+    real(mytype), intent(out), dimension(ny,nz) :: ss
+    real(mytype), intent(in), dimension(nx):: ff, fs, fw, perio
+    real(mytype), intent(in) :: alfa
+
+    integer :: i, j, k
+
+    call xthomas_12_omp(tt, ff, fs, fw, nx, ny, nz)
+    ! Optimized solver, rr is pre-determined
+    !$omp parallel do collapse(2) private(i, j, k)
+    do k = 1, nz
+       do j = 1, ny
+          ss(j,k) = (   tt(1,j,k)-alfa*tt(nx,j,k)) &
+               / (one+perio(1)-alfa*perio(nx))
+          do i = 1, nx
+             tt(i,j,k) = tt(i,j,k) - ss(j,k)*perio(i)
+          enddo
+       enddo
+    enddo
+    !$omp end parallel do
+
+  end subroutine xthomas_0_omp
+
+  
   ! Thomas algorithm in X direction
   pure subroutine xthomas_12(tt, ff, fs, fw, nx, ny, nz)
 
@@ -105,6 +140,32 @@ contains
     enddo
 
   end subroutine xthomas_12
+  subroutine xthomas_12_omp(tt, ff, fs, fw, nx, ny, nz)
+    ! XXX: won't compile as PURE under GCC
+    
+    implicit none
+
+    integer, intent(in) :: nx, ny, nz
+    real(mytype), intent(inout), dimension(nx,ny,nz) :: tt
+    real(mytype), intent(in), dimension(nx):: ff, fs, fw
+
+    integer :: i, j, k
+
+    !$omp parallel do collapse(2) private(i, j, k)
+    do k = 1, nz
+       do j = 1, ny
+          do i = 2, nx
+             tt(i,j,k) = tt(i,j,k) - tt(i-1,j,k)*fs(i)
+          enddo
+          tt(nx,j,k) = tt(nx,j,k) * fw(nx)
+          do i=nx-1,1,-1
+             tt(i,j,k) = (tt(i,j,k)-ff(i)*tt(i+1,j,k)) * fw(i)
+          enddo
+       enddo
+    end do
+    !$omp end parallel do
+
+  end subroutine xthomas_12_omp
 
   ! Thomas algorithm in Y direction (periodicity)
   subroutine ythomas_0(tt, ss, ff, fs, fw, perio, alfa, nx, ny, nz)
