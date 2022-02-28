@@ -22,7 +22,7 @@ contains
        pp3, px1, py1, pz1)
 
     use mom, only : vel
-    use decomp_2d, only : xsize, ph1
+    use decomp_2d, only : xsize
 
     real(mytype),dimension(xsize(1),xsize(2),xsize(3)) :: ux1,uy1,uz1
     real(mytype),dimension(xsize(1),xsize(2),xsize(3),ntime) :: dux1,duy1,duz1

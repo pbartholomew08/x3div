@@ -32,9 +32,12 @@
 
 module var
 
-  use decomp_2d, only : mytype
+  use decomp_2d, only : mytype, decomp_info
 
   implicit none
+
+  ! Grids
+  type(decomp_info) :: ph1, ph2, ph3, ph4, phG
   
   ! define all major arrays here
   real(mytype), save, allocatable, dimension(:,:,:) :: ux1, ux2, ux3, po3, dv3
@@ -45,6 +48,7 @@ module var
   real(mytype), save, allocatable, dimension(:,:,:) :: px1, py1, pz1
   real(mytype), save, allocatable, dimension(:,:,:,:) :: dux1,duy1,duz1  ! Output of convdiff
 
+  integer, save :: nxmsize, nymsize, nzmsize
 
   ! define all work arrays here
   real(mytype), save, allocatable, dimension(:,:,:) :: ta1,tb1,tc1,td1,&
@@ -70,10 +74,12 @@ contains
     use param
     use decomp_2d, only : DECOMP_INFO
     use decomp_2d , only : alloc_x, alloc_y, alloc_z
-    use decomp_2d , only : xsize, ysize, zsize, ph1, ph3
+    use decomp_2d , only : xsize, ysize, zsize
     use decomp_2d , only : nrank
 
     implicit none
+
+    TYPE(DECOMP_INFO), save :: ph! decomposition object
 
     integer :: i, j , k
 
@@ -83,10 +89,34 @@ contains
 
     if (nrank == 0) write(*,*) '# Initializing variables...'
 
+    if (nclx) then
+       nxmsize = xsize(1)
+    else
+       nxmsize = xsize(1) -1
+    endif
+    if (ncly) then
+       nymsize = ysize(2)
+    else
+       nymsize = ysize(2) -1
+    endif
+    if (nclz) then
+       nzmsize = zsize(3)
+    else
+       nzmsize = zsize(3) -1
+    endif
+    call decomp_info_init(nxmsize, nymsize, nzmsize, ph)
     !xsize(i), ysize(i), zsize(i), i=1,2,3 - sizes of the sub-domains held by the current process. The first letter refers to the pencil orientation and the three 1D array elements contain the sub-domain sizes in X, Y and Z directions, respectively. In a 2D pencil decomposition, there is always one dimension which completely resides in local memory. So by definition xsize(1)==nx_global, ysize(2)==ny_global and zsize(3)==nz_global.
 
     !xstart(i), ystart(i), zstart(i), xend(i), yend(i), zend(i), i=1,2,3 - the starting and ending indices for each sub-domain, as in the global coordinate system. Obviously, it can be seen that xsize(i)=xend(i)-xstart(i)+1. It may be convenient for certain applications to use global coordinate (for example when extracting a 2D plane from a 3D domain, it is easier to know which process owns the plane if global index is used).
+    
+    !div: nx ny nz --> nxm ny nz --> nxm nym nz --> nxm nym nzm
+    call decomp_info_init(nxm, nym, nzm, ph1)
+    call decomp_info_init(nxm, ny, nz, ph4)
+    !gradp: nxm nym nzm -> nxm nym nz --> nxm ny nz --> nx ny nz
+    call decomp_info_init(nxm, ny, nz, ph2)
+    call decomp_info_init(nxm, nym, nz, ph3)
 
+    call decomp_info_init(nxm,nym,nzm,phG) ! XXX: Why does this exist?
 
     !X PENCILS
     call alloc_x(ux1, opt_global=.true.) !global indices

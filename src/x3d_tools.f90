@@ -107,7 +107,6 @@ subroutine init_xcompact3d(ndt_max)
   use decomp_2d, only : init_coarser_mesh_statS, &
                         init_coarser_mesh_statV, &
                         init_coarser_mesh_statP
-  use decomp_2d, only : ph1, ph2, ph3, phG
   USE decomp_2d_poisson, ONLY : decomp_2d_poisson_init
   use x3d_operator_x_data, only : x3d_operator_x_data_init
   use x3d_operator_y_data, only : x3d_operator_y_data_init
@@ -229,15 +228,14 @@ end subroutine
 subroutine finalise_xcompact3d(flag)
 
   use MPI
-  use decomp_2d, only : decomp_2d_finalize, decomp_info_finalize, &
-                        ph1, ph2, ph3, phG
+  use decomp_2d, only : decomp_2d_finalize, decomp_info_finalize
   use decomp_2d_poisson, only : decomp_2d_poisson_finalize
   use x3d_operator_x_data, only : x3d_operator_x_data_finalize
   use x3d_operator_y_data, only : x3d_operator_y_data_finalize
   use x3d_operator_z_data, only : x3d_operator_z_data_finalize
   use x3d_operator_1d, only : x3d_operator_1d_finalize
   use x3d_derive, only : x3d_derive_finalize
-  use var, only : var_finalize
+  use var, only : var_finalize, ph1, ph2, ph3, ph4, phg
 
   implicit none
 

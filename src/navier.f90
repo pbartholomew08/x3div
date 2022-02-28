@@ -93,7 +93,7 @@ contains
     use x3d_staggered
     use decomp_2d, only : mytype, real_type, decomp_2d_warning
     use param
-    use decomp_2d, only : nrank, ph1, ph2, ph3, nproc
+    use decomp_2d, only : nrank, nproc
     use decomp_2d, only : xsize, ysize, zsize
     use decomp_2d, only : nx_global, ny_global, nz_global
     use decomp_2d, only : transpose_x_to_y, &
@@ -207,7 +207,7 @@ contains
     use x3d_staggered
     use x3d_transpose
     USE param
-    USE decomp_2d, only: mytype, xsize, ysize, zsize, ph2, ph3
+    USE decomp_2d, only: mytype, xsize, ysize, zsize
     use decomp_2d, only: xstart, xend, ystart, yend, zstart, zend
     USE variables
     USE var, only: pp1,pgy1,pgz1,pp2,ppi2,pgy2,pgz2,pgzi2,&
