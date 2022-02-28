@@ -48,30 +48,30 @@ module x3d_transpose
              x3d_transpose_y_to_x
 
   interface x3d_transpose_x_to_y
-    module procedure x3d_transpose_x_to_y_real_short
+    ! module procedure x3d_transpose_x_to_y_real_short
     module procedure x3d_transpose_x_to_y_real
-    module procedure x3d_transpose_x_to_y_cplx_short
+    ! module procedure x3d_transpose_x_to_y_cplx_short
     module procedure x3d_transpose_x_to_y_cplx
   end interface x3d_transpose_x_to_y
 
   interface x3d_transpose_y_to_z
-    module procedure x3d_transpose_y_to_z_real_short
+    ! module procedure x3d_transpose_y_to_z_real_short
     module procedure x3d_transpose_y_to_z_real
-    module procedure x3d_transpose_y_to_z_cplx_short
+    ! module procedure x3d_transpose_y_to_z_cplx_short
     module procedure x3d_transpose_y_to_z_cplx
   end interface x3d_transpose_y_to_z
 
   interface x3d_transpose_z_to_y
-    module procedure x3d_transpose_z_to_y_real_short
+    ! module procedure x3d_transpose_z_to_y_real_short
     module procedure x3d_transpose_z_to_y_real
-    module procedure x3d_transpose_z_to_y_cplx_short
+    ! module procedure x3d_transpose_z_to_y_cplx_short
     module procedure x3d_transpose_z_to_y_cplx
   end interface x3d_transpose_z_to_y
 
   interface x3d_transpose_y_to_x
-    module procedure x3d_transpose_y_to_x_real_short
+    ! module procedure x3d_transpose_y_to_x_real_short
     module procedure x3d_transpose_y_to_x_real
-    module procedure x3d_transpose_y_to_x_cplx_short
+    ! module procedure x3d_transpose_y_to_x_cplx_short
     module procedure x3d_transpose_y_to_x_cplx
   end interface x3d_transpose_y_to_x
 
@@ -98,9 +98,13 @@ contains
 
     !! Local
     integer :: i, j, k
-
+    integer :: nx, ny, nz
+    
     if (p_row == 1) then
-       do concurrent (k=1:decomp%xsz(3), j=1:decomp%xsz(2), i=1:decomp%xsz(1))
+       nx = size(data_in, 1)
+       ny = size(data_in, 2)
+       nz = size(data_in, 3)
+       do concurrent (k=1:nz, j=1:ny, i=1:nx)
           data_out(i,j,k) = data_in(i,j,k)
        enddo
     else
@@ -126,9 +130,13 @@ contains
 
     !! Local
     integer :: i, j, k
-
+    integer :: nx, ny, nz
+    
     if (p_row == 1) then
-       do concurrent (k=1:decomp%xsz(3), j=1:decomp%xsz(2), i=1:decomp%xsz(1))
+       nx = size(data_in, 1)
+       ny = size(data_in, 2)
+       nz = size(data_in, 3)
+       do concurrent (k=1:nz, j=1:ny, i=1:nx)
           data_out(i,j,k) = data_in(i,j,k)
        enddo
     else
@@ -161,9 +169,13 @@ contains
 
     !! Local
     integer :: i, j, k
-
+    integer :: nx, ny, nz
+    
     if (p_col == 1) then
-       do concurrent (k=1:decomp%ysz(3), j=1:decomp%ysz(2), i=1:decomp%ysz(1))
+       nx = size(data_in, 1)
+       ny = size(data_in, 2)
+       nz = size(data_in, 3)
+       do concurrent (k=1:nz, j=1:ny, i=1:nx)
           data_out(i,j,k) = data_in(i,j,k)
        enddo
     else
@@ -189,9 +201,13 @@ contains
 
     !! Local
     integer :: i, j, k
+    integer :: nx, ny, nz
 
     if (p_col == 1) then
-       do concurrent (k=1:decomp%ysz(3), j=1:decomp%ysz(2), i=1:decomp%ysz(1))
+       nx = size(data_in, 1)
+       ny = size(data_in, 2)
+       nz = size(data_in, 3)
+       do concurrent (k=1:nz, j=1:ny, i=1:nx)
           data_out(i,j,k) = data_in(i,j,k)
        enddo
     else
@@ -224,9 +240,13 @@ contains
 
     !! Local
     integer :: i, j, k
-
+    integer :: nx, ny, nz
+    
     if (p_col == 1) then
-       do concurrent (k=1:decomp%zsz(3), j=1:decomp%zsz(2), i=1:decomp%zsz(1))
+       nx = size(data_in, 1)
+       ny = size(data_in, 2)
+       nz = size(data_in, 3)
+       do concurrent (k=1:nz, j=1:ny, i=1:nx)
           data_out(i,j,k) = data_in(i,j,k)
        enddo
     else
@@ -252,9 +272,13 @@ contains
 
     !! Local
     integer :: i, j, k
-
+    integer :: nx, ny, nz
+    
     if (p_col == 1) then
-       do concurrent (k=1:decomp%zsz(3), j=1:decomp%zsz(2), i=1:decomp%zsz(1))
+       nx = size(data_in, 1)
+       ny = size(data_in, 2)
+       nz = size(data_in, 3)
+       do concurrent (k=1:nz, j=1:ny, i=1:nx)
           data_out(i,j,k) = data_in(i,j,k)
        enddo
     else 
@@ -287,9 +311,13 @@ contains
 
     !! Local
     integer :: i, j, k
-
+    integer :: nx, ny, nz
+    
     if (p_row == 1) then
-       do concurrent (k=1:decomp%ysz(3), j=1:decomp%ysz(2), i=1:decomp%ysz(1))
+       nx = size(data_in, 1)
+       ny = size(data_in, 2)
+       nz = size(data_in, 3)
+       do concurrent (k=1:nz, j=1:ny, i=1:nx)
           data_out(i,j,k) = data_in(i,j,k)
        enddo
     else
@@ -315,9 +343,13 @@ contains
 
     !! Local
     integer :: i, j, k
-
+    integer :: nx, ny, nz
+    
     if (p_row == 1) then
-       do concurrent (k=1:decomp%ysz(3), j=1:decomp%ysz(2), i=1:decomp%ysz(1))
+       nx = size(data_in, 1)
+       ny = size(data_in, 2)
+       nz = size(data_in, 3)
+       do concurrent (k=1:nz, j=1:ny, i=1:nx)
           data_out(i,j,k) = data_in(i,j,k)
       enddo
    else
@@ -331,121 +363,121 @@ contains
   end subroutine x3d_transpose_y_to_x_cplx
 
 
-  !############################################################################
-  !!  SUBROUTINE: x3d_transpose_*_to_*_short
-  !!      AUTHOR: Cédric Flageul
-  !! DESCRIPTION: Call the x3d_transpose_*_to_* with the decomp_info object
-  !############################################################################
-  subroutine x3d_transpose_x_to_y_real_short(data_in, data_out)
+  !!! !############################################################################
+  !!! !!  SUBROUTINE: x3d_transpose_*_to_*_short
+  !!! !!      AUTHOR: Cédric Flageul
+  !!! !! DESCRIPTION: Call the x3d_transpose_*_to_* with the decomp_info object
+  !!! !############################################################################
+  !!! subroutine x3d_transpose_x_to_y_real_short(data_in, data_out)
 
-    use decomp_2d, only : xsize, ysize
+  !!!   use decomp_2d, only : xsize, ysize
 
-    implicit none
+  !!!   implicit none
 
-    !! Input/Output
-    real(mytype), dimension(xsize(1), xsize(2), xsize(3)), intent(in) :: data_in
-    real(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(out) :: data_out
+  !!!   !! Input/Output
+  !!!   real(mytype), dimension(xsize(1), xsize(2), xsize(3)), intent(in) :: data_in
+  !!!   real(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(out) :: data_out
 
-    call x3d_transpose_x_to_y(data_in, data_out)
+  !!!   call x3d_transpose_x_to_y(data_in, data_out)
 
-  end subroutine x3d_transpose_x_to_y_real_short
-  !############################################################################
-  subroutine x3d_transpose_x_to_y_cplx_short(data_in, data_out)
+  !!! end subroutine x3d_transpose_x_to_y_real_short
+  !!! !############################################################################
+  !!! subroutine x3d_transpose_x_to_y_cplx_short(data_in, data_out)
 
-    use decomp_2d, only : xsize, ysize
+  !!!   use decomp_2d, only : xsize, ysize
 
-    implicit none
+  !!!   implicit none
 
-    !! Input/Output
-    complex(mytype), dimension(xsize(1), xsize(2), xsize(3)), intent(in) :: data_in
-    complex(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(out) :: data_out
+  !!!   !! Input/Output
+  !!!   complex(mytype), dimension(xsize(1), xsize(2), xsize(3)), intent(in) :: data_in
+  !!!   complex(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(out) :: data_out
 
-    call x3d_transpose_x_to_y(data_in, data_out)
+  !!!   call x3d_transpose_x_to_y(data_in, data_out)
 
-  end subroutine x3d_transpose_x_to_y_cplx_short
-  !############################################################################
-  subroutine x3d_transpose_y_to_z_real_short(data_in, data_out)
+  !!! end subroutine x3d_transpose_x_to_y_cplx_short
+  !!! !############################################################################
+  !!! subroutine x3d_transpose_y_to_z_real_short(data_in, data_out)
 
-    use decomp_2d, only : ysize, zsize
+  !!!   use decomp_2d, only : ysize, zsize
 
-    implicit none
+  !!!   implicit none
 
-    !! Input/Output
-    real(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(in) :: data_in
-    real(mytype), dimension(zsize(1), zsize(2), zsize(3)), intent(out) :: data_out
+  !!!   !! Input/Output
+  !!!   real(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(in) :: data_in
+  !!!   real(mytype), dimension(zsize(1), zsize(2), zsize(3)), intent(out) :: data_out
 
-    call x3d_transpose_y_to_z(data_in, data_out)
+  !!!   call x3d_transpose_y_to_z(data_in, data_out)
 
-  end subroutine x3d_transpose_y_to_z_real_short
-  !############################################################################
-  subroutine x3d_transpose_y_to_z_cplx_short(data_in, data_out)
+  !!! end subroutine x3d_transpose_y_to_z_real_short
+  !!! !############################################################################
+  !!! subroutine x3d_transpose_y_to_z_cplx_short(data_in, data_out)
 
-    use decomp_2d, only : ysize, zsize
+  !!!   use decomp_2d, only : ysize, zsize
 
-    implicit none
+  !!!   implicit none
 
-    !! Input/Output
-    complex(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(in) :: data_in
-    complex(mytype), dimension(zsize(1), zsize(2), zsize(3)), intent(out) :: data_out
+  !!!   !! Input/Output
+  !!!   complex(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(in) :: data_in
+  !!!   complex(mytype), dimension(zsize(1), zsize(2), zsize(3)), intent(out) :: data_out
 
-    call x3d_transpose_y_to_z(data_in, data_out)
+  !!!   call x3d_transpose_y_to_z(data_in, data_out)
 
-  end subroutine x3d_transpose_y_to_z_cplx_short
-  !############################################################################
-  subroutine x3d_transpose_z_to_y_real_short(data_in, data_out)
+  !!! end subroutine x3d_transpose_y_to_z_cplx_short
+  !!! !############################################################################
+  !!! subroutine x3d_transpose_z_to_y_real_short(data_in, data_out)
 
-    use decomp_2d, only : zsize, ysize
+  !!!   use decomp_2d, only : zsize, ysize
 
-    implicit none
+  !!!   implicit none
 
-    !! Input/Output
-    real(mytype), dimension(zsize(1), zsize(2), zsize(3)), intent(in) :: data_in
-    real(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(out) :: data_out
+  !!!   !! Input/Output
+  !!!   real(mytype), dimension(zsize(1), zsize(2), zsize(3)), intent(in) :: data_in
+  !!!   real(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(out) :: data_out
 
-    call x3d_transpose_z_to_y(data_in, data_out)
+  !!!   call x3d_transpose_z_to_y(data_in, data_out)
 
-  end subroutine x3d_transpose_z_to_y_real_short
-  !############################################################################
-  subroutine x3d_transpose_z_to_y_cplx_short(data_in, data_out)
+  !!! end subroutine x3d_transpose_z_to_y_real_short
+  !!! !############################################################################
+  !!! subroutine x3d_transpose_z_to_y_cplx_short(data_in, data_out)
 
-    use decomp_2d, only : zsize, ysize
+  !!!   use decomp_2d, only : zsize, ysize
 
-    implicit none
+  !!!   implicit none
 
-    !! Input/Output
-    complex(mytype), dimension(zsize(1), zsize(2), zsize(3)), intent(in) :: data_in
-    complex(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(out) :: data_out
+  !!!   !! Input/Output
+  !!!   complex(mytype), dimension(zsize(1), zsize(2), zsize(3)), intent(in) :: data_in
+  !!!   complex(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(out) :: data_out
 
-    call x3d_transpose_z_to_y(data_in, data_out)
+  !!!   call x3d_transpose_z_to_y(data_in, data_out)
 
-  end subroutine x3d_transpose_z_to_y_cplx_short
-  !############################################################################
-  subroutine x3d_transpose_y_to_x_real_short(data_in, data_out)
+  !!! end subroutine x3d_transpose_z_to_y_cplx_short
+  !!! !############################################################################
+  !!! subroutine x3d_transpose_y_to_x_real_short(data_in, data_out)
 
-    use decomp_2d, only : ysize, xsize
+  !!!   use decomp_2d, only : ysize, xsize
 
-    implicit none
+  !!!   implicit none
 
-    !! Input/Output
-    real(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(in) :: data_in
-    real(mytype), dimension(xsize(1), xsize(2), xsize(3)), intent(out) :: data_out
+  !!!   !! Input/Output
+  !!!   real(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(in) :: data_in
+  !!!   real(mytype), dimension(xsize(1), xsize(2), xsize(3)), intent(out) :: data_out
 
-    call x3d_transpose_y_to_x(data_in, data_out)
+  !!!   call x3d_transpose_y_to_x(data_in, data_out)
 
-  end subroutine x3d_transpose_y_to_x_real_short
-  !############################################################################
-  subroutine x3d_transpose_y_to_x_cplx_short(data_in, data_out)
+  !!! end subroutine x3d_transpose_y_to_x_real_short
+  !!! !############################################################################
+  !!! subroutine x3d_transpose_y_to_x_cplx_short(data_in, data_out)
 
-    use decomp_2d, only : ysize, xsize
+  !!!   use decomp_2d, only : ysize, xsize
 
-    implicit none
+  !!!   implicit none
 
-    !! Input/Output
-    complex(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(in) :: data_in
-    complex(mytype), dimension(xsize(1), xsize(2), xsize(3)), intent(out) :: data_out
+  !!!   !! Input/Output
+  !!!   complex(mytype), dimension(ysize(1), ysize(2), ysize(3)), intent(in) :: data_in
+  !!!   complex(mytype), dimension(xsize(1), xsize(2), xsize(3)), intent(out) :: data_out
 
-    call x3d_transpose_y_to_x(data_in, data_out)
+  !!!   call x3d_transpose_y_to_x(data_in, data_out)
 
-  end subroutine x3d_transpose_y_to_x_cplx_short
+  !!! end subroutine x3d_transpose_y_to_x_cplx_short
 
 end module x3d_transpose
