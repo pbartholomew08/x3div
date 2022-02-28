@@ -1,6 +1,7 @@
 *.o
 *.mod
 xcompact3d
+build*
 *.dat
 2decomp
 TAGS
